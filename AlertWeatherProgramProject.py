@@ -22,18 +22,17 @@ def send_a_text_message(Body):
     from_phone_number = "+18773815389"
     to_phone_number = "+3133981074"
 
-    client = Client(account_sid,auth_token)
+    client = Client(account_sid, auth_token)
     message = client.messages.create(
-        Body = Body,
-        from_ = from_phone_number,
-        to = to_phone_number
-
-
+        body=Body,
+        from_=from_phone_number,
+        to_=to_phone_number
     )
     print("Text Message SENT!!")
 
+
 def SendWeatherUpdate():
-    #hard coded latitude and longitude for Michigan, Detroit
+    #hard coded latitude and longitude for Michigan, Warren
     Latitude = 42.4904
     Longitude = -83.013
 
