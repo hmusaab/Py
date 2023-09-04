@@ -9,7 +9,7 @@ from twilio.rest import Client
 
 
 def get_weather(Latitude, Longitude):
-    base_url = f"https://api.open-meteo.com/v1/forecast?latitude=42.4904&longitude=-83.013&hourly=temperature_2m,relativehumidity_2m,windspeed_180m"
+    base_url = f"https://api.open-meteo.com/v1/forecast?latitude={Latitude}&longitude={Longitude}&hourly=temperature_2m,relativehumidity_2m,windspeed_180m"
     response = requests.get(base_url)
     data = response.json
     return data
@@ -34,14 +34,14 @@ def send_a_text_message(Body):
 
 def SendWeatherUpdate():
     #hard coded latitude and longitude for Michigan, Detroit
-    MI_Latitude = 42.4904
-    MI_Longitude = -83.013
+    Latitude = 42.4904
+    Longitude = -83.013
 
-    weatherData = get_weather(MI_Latitude, MI_Longitude)
+    weatherData = get_weather(Latitude, Longitude)
     temperature_for_celsius = weatherData["hourly"]["temperature_2m"][0]
     relativehumidity = weatherData["hourly"]["relativehumidity_2m"][1]
     windspeed = weatherData["hourly"]["windspeed_180m"][0]
-    temperature_for_fahrenheit = celsius_to_fahrenheit()
+    temperature_for_fahrenheit = celsius_to_fahrenheit(temperature_for_celsius)
 
     WeatherInfo = (
         f"Good Morning Musaab!\n"
@@ -56,7 +56,7 @@ def SendWeatherUpdate():
 
 
 def main():
-    schedule.every().day.at("6:00").do(SendWeatherUpdate)
+    schedule.every().day.at("06:00").do(SendWeatherUpdate)
     while True:
         schedule.run_pending()
         time.sleep(1)
