@@ -1,20 +1,16 @@
 import schedule
 import time
-import datetime as dt
 import requests
 from twilio.rest import Client
-
-
-
-
 
 def get_weather(Latitude, Longitude):
     base_url = f"https://api.open-meteo.com/v1/forecast?latitude={Latitude}&longitude={Longitude}&hourly=temperature_2m,relativehumidity_2m,windspeed_180m"
     response = requests.get(base_url)
-    data = response.json
+    data = response.json()
     return data
+
 def celsius_to_fahrenheit(celsius):
-    return(celsius * 9/5) + 32  #helper function
+    return (celsius * 9/5) + 32
 
 def send_a_text_message(Body):
     account_sid = "AC6d138c5f196062bf72a0ebe33e45f890"
@@ -26,19 +22,18 @@ def send_a_text_message(Body):
     message = client.messages.create(
         body=Body,
         from_=from_phone_number,
-        to_=to_phone_number
+        to=to_phone_number
     )
     print("Text Message SENT!!")
 
-
 def SendWeatherUpdate():
-    #hard coded latitude and longitude for Michigan, Warren
+    # Hard-coded latitude and longitude for Michigan, Warren
     Latitude = 42.4904
     Longitude = -83.013
 
     weatherData = get_weather(Latitude, Longitude)
     temperature_for_celsius = weatherData["hourly"]["temperature_2m"][0]
-    relativehumidity = weatherData["hourly"]["relativehumidity_2m"][1]
+    relativehumidity = weatherData["hourly"]["relativehumidity_2m"][0]
     windspeed = weatherData["hourly"]["windspeed_180m"][0]
     temperature_for_fahrenheit = celsius_to_fahrenheit(temperature_for_celsius)
 
@@ -51,15 +46,13 @@ def SendWeatherUpdate():
     )
     send_a_text_message(WeatherInfo)
 
-
-
-
 def main():
-    schedule.every().day.at("06:00").do(SendWeatherUpdate)
+    schedule.every().day.at("09:00").do(SendWeatherUpdate)
     while True:
         schedule.run_pending()
         time.sleep(1)
 
+    
 
 if __name__ == "__main__":
-    main() 
+    main()
