@@ -1,7 +1,10 @@
 import schedule
 import time
 import requests
-from twilio.rest import Client
+from pushbullet import PushBullet  
+from pywebio.input import *  
+from pywebio.output import *  
+from pywebio.session import *  
 
 def get_weather(Latitude, Longitude):
     base_url = f"https://api.open-meteo.com/v1/forecast?latitude={Latitude}&longitude={Longitude}&hourly=temperature_2m,relativehumidity_2m,windspeed_180m"
@@ -13,18 +16,18 @@ def celsius_to_fahrenheit(celsius):
     return (celsius * 9/5) + 32
 
 def send_a_text_message(Body):
-    account_sid = "AC6d138c5f196062bf72a0ebe33e45f890"
-    auth_token = "199bb331e292aca89155f3d1e629214d"
-    from_phone_number = "+18773815389"
-    to_phone_number = "+3133981074"
+    access_token = "o.r7iQu3DdWRWREXLmlP78Ub8JPZ7RZj58"
+    pb = PushBullet(access_token)
+    push = pb.push_note("The Weather Update fool",Body)
 
-    client = Client(account_sid, auth_token)
-    message = client.messages.create(
-        body=Body,
-        from_=from_phone_number,
-        to=to_phone_number
-    )
-    print("Text Message SENT!!")
+    #make sure the push was successful
+    if push["active"]:
+        print("Weather Update was sent successfully")
+    else:
+        print("Weather Update fail to sent")
+
+
+    
 
 def SendWeatherUpdate():
     # Hard-coded latitude and longitude for Michigan, Warren
@@ -47,7 +50,7 @@ def SendWeatherUpdate():
     send_a_text_message(WeatherInfo)
 
 def main():
-    schedule.every().day.at("09:00").do(SendWeatherUpdate)
+    schedule.every().day.at("10:00").do(SendWeatherUpdate)
     while True:
         schedule.run_pending()
         time.sleep(1)
